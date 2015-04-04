@@ -62,9 +62,9 @@
 
     CGRect contentRect = UIEdgeInsetsInsetRect(self.collectionView.frame, self.collectionView.contentInset);
     if (isVert)
-        return CGSizeMake(CGRectGetWidth(contentRect), (self.furthestBlockPoint.y+1) * self.blockPixels.height);
+        return CGSizeMake(CGRectGetWidth(contentRect), (self.furthestBlockPoint.y+1) * self.blockPixels.height + self.topOffset);
     else
-        return CGSizeMake((self.furthestBlockPoint.x+1) * self.blockPixels.width, CGRectGetHeight(contentRect));
+        return CGSizeMake((self.furthestBlockPoint.x+1) * self.blockPixels.width, CGRectGetHeight(contentRect) + self.topOffset);
 }
 
 - (NSArray *)layoutAttributesForElementsInRect:(CGRect)rect {
@@ -78,7 +78,7 @@
     
     BOOL isVert = self.direction == UICollectionViewScrollDirectionVertical;
     
-    int unrestrictedDimensionStart = isVert? rect.origin.y / self.blockPixels.height : rect.origin.x / self.blockPixels.width;
+    int unrestrictedDimensionStart = isVert? (rect.origin.y - self.topOffset) / self.blockPixels.height : rect.origin.x / self.blockPixels.width;
     int unrestrictedDimensionLength = (isVert? rect.size.height / self.blockPixels.height : rect.size.width / self.blockPixels.width) + 1;
     int unrestrictedDimensionEnd = unrestrictedDimensionStart + unrestrictedDimensionLength;
     
@@ -92,7 +92,7 @@
         if(indexPath) [attributes addObject:[self layoutAttributesForItemAtIndexPath:indexPath]];
         return YES;
     }];
-    
+    NSLog(@"%@", attributes);
     return (self.previousLayoutAttributes = [attributes allObjects]);
 }
 
@@ -105,6 +105,7 @@
     CGRect frame = [self frameForIndexPath:indexPath];
     UICollectionViewLayoutAttributes* attributes = [UICollectionViewLayoutAttributes layoutAttributesForCellWithIndexPath:indexPath];
     attributes.frame = UIEdgeInsetsInsetRect(frame, insets);
+    attributes.frame = CGRectMake(attributes.frame.origin.x, attributes.frame.origin.y + self.topOffset, attributes.frame.size.width, attributes.frame.size.height);
     return attributes;
 }
 
