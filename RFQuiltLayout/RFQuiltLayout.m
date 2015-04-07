@@ -92,7 +92,6 @@
         if(indexPath) [attributes addObject:[self layoutAttributesForItemAtIndexPath:indexPath]];
         return YES;
     }];
-    NSLog(@"%@", attributes);
     return (self.previousLayoutAttributes = [attributes allObjects]);
 }
 
